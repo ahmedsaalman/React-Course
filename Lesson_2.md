@@ -1,31 +1,5 @@
 # Lesson 2 --- Components & JSX
 
-## Love That Mental Model --- "Safe Space" is Actually Perfect
-
-Let me build on your words:
-
-> The Virtual DOM is React's **scratch pad**.\
-> React does all its thinking there first --- figures out the *minimum*
-> changes needed --- then touches the real DOM **once**, **precisely**,
-> and **efficiently**.
-
-You instinctively got the core reason: **fewer, smarter DOM updates**.
-That's exactly why it exists. ✅
-
-------------------------------------------------------------------------
-
-## We're Ready for Lesson 2
-
-You've got the foundations solid:
-
--   ✅ Why React exists (`UI = f(state)`)
--   ✅ SPA mental model
--   ✅ Virtual DOM purpose
-
-------------------------------------------------------------------------
-
-# Lesson 2 --- Components & JSX
-
 ## What is a Component?
 
 A component is just a **function that returns UI**.
