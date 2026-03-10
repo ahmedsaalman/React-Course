@@ -1,6 +1,21 @@
 
-```markdown
-## Lesson 5: The `useEffect` Hook and React Component Architecture
+# Lesson 5: The `useEffect` Hook & React Component Architecture
+
+**Table of Contents**
+1. [The `useEffect` Hook](#1-the-useeffect-hook)
+   - [What is a Side Effect?](#what-is-a-side-effect)
+   - [Syntax Structure](#syntax-structure)
+   - [The Dependency Array](#the-dependency-array-controlling-execution)
+   - [The Cleanup Function](#the-cleanup-function)
+2. [React Component Architecture](#2-react-component-architecture)
+   - [The Problem: The "God Component"](#the-problem-the-god-component)
+   - [The Solution: Three Core Principles](#the-solution-three-core-principles)
+   - [Component Architecture Example](#component-architecture-example-study-planner)
+   - [Derived Data](#derived-data)
+
+---
+
+## 1. The `useEffect` Hook
 
 ### What is a Side Effect?
 In React, the primary job of a component is to return UI (JSX) based on its current props and state. A "side effect" is any action that reaches outside of this predictable rendering process to interact with the outside world. 
@@ -13,8 +28,6 @@ Common examples of side effects include:
 * Subscribing to external events (like a WebSocket connection).
 
 ### Introducing `useEffect`
-
-
 The `useEffect` hook allows you to perform side effects in function components. It tells React to execute a specific block of code *after* the component has finished rendering the UI to the screen.
 
 ### Syntax Structure
@@ -90,23 +103,28 @@ useEffect(() => {
 }, []);
 
 ```
-## The Problem: The "God Component"
-
-As applications grow, placing all state and handler functions inside a single component (like `App.jsx`) creates a "God Component." This leads to two major issues:
-
-1.  **Prop Drilling:** Data must travel through multiple layers of components that do not need the data, simply to reach a deeply nested child component that does.
-2.  **No Clear Responsibility:** When bugs occur, the entire codebase must be scanned because all logic is tangled in one massive file.
 
 ---
 
-## The Solution: Three Core Principles
+## 2. React Component Architecture
+
+### The Problem: The "God Component"
+
+As applications grow, placing all state and handler functions inside a single component (like `App.jsx`) creates a "God Component." This leads to two major issues:
+
+1. **Prop Drilling:** Data must travel through multiple layers of components that do not need the data, simply to reach a deeply nested child component that does.
+2. **No Clear Responsibility:** When bugs occur, the entire codebase must be scanned because all logic is tangled in one massive file.
+
+### The Solution: Three Core Principles
 
 To build scalable React applications, follow these three architectural principles:
 
-### Principle 1: Single Responsibility
-Each component should do exactly one thing. 
+#### Principle 1: Single Responsibility
+
+Each component should do exactly one thing.
 
 *Mental Model:* Think of a hospital. The surgeon performs surgery, the receptionist handles appointments, and the director coordinates. Nobody does everything.
+
 * **Header:** Shows the app name.
 * **Sidebar:** Shows the subject list.
 * **TaskBoard:** Shows the list of tasks.
@@ -114,7 +132,8 @@ Each component should do exactly one thing.
 * **AddTaskForm:** Handles new task input.
 * **App:** Assembles everything and owns shared state.
 
-### Principle 2: Lifting State Up
+#### Principle 2: Lifting State Up
+
 State should live at the **lowest common ancestor** of all components that need it. State lives as low as possible, but high enough to reach everyone who needs it.
 
 * **tasks array:** Needed by TaskBoard (to render) and AddTaskForm (to add). Common ancestor = `App`.
@@ -122,48 +141,49 @@ State should live at the **lowest common ancestor** of all components that need 
 * **title (input field):** Needed only by AddTaskForm. Common ancestor = `AddTaskForm` itself.
 
 **Visualizing Data Flow:**
+
 * **Data** flows **down** through props (Parent -> Child).
 * **Events** flow **up** through callback functions (Child -> Parent).
 
-### Principle 3: Controlled Components
+#### Principle 3: Controlled Components
+
 Form inputs are always controlled by React state. The DOM does not own the value; React does.
 
 * **Uncontrolled:** `<input type="text" />` (React has no idea what is typed).
-* **Controlled:** `<input value={title} onChange={(e) => setTitle(e.target.value)} />` 
+* **Controlled:** `<input value={title} onChange={(e) => setTitle(e.target.value)} />`
 * **Why?** It allows you to read the value anytime, reset it programmatically, validate before submission, and pre-fill existing data.
 
----
+### Component Architecture Example (Study Planner)
 
-## Component Architecture Example (Study Planner)
+#### 1. Presentational Components (No State)
 
-### 1. Presentational Components (No State)
 * **Header.jsx:** Returns pure UI. No state, no props.
 * **TaskCard.jsx:** Knows only about one task. Receives `task`, `onDelete`, and `onToggle` as props.
 * **TaskBoard.jsx:** Renders a list. Receives `tasks`, `onDelete`, and `onToggle` as props. Maps through the tasks to render TaskCards.
 
-### 2. Interactive Components (Local State)
+#### 2. Interactive Components (Local State)
+
 * **Sidebar.jsx:** Displays subjects and reports clicks upward. Receives `subjects`, `selectedSubject`, and `onSelectSubject`.
 * **AddTaskForm.jsx:** Owns local input state (`title`, `subject`, `due`). Handles validation and packaging the new task before sending it up to App via the `onAdd` prop.
 
-### 3. The Coordinator (Global State)
+#### 3. The Coordinator (Global State)
+
 * **App.jsx:** Coordinates the entire application.
-    * **Owns:** `tasks` (persisted to localStorage), `selectedSubject`, and the static `subjects` list.
-    * **Calculates:** Derived data like `filteredTasks`.
-    * **Defines handlers:** `handleAddTask`, `handleDeleteTask`, `handleToggleComplete`.
+* **Owns:** `tasks` (persisted to localStorage), `selectedSubject`, and the static `subjects` list.
+* **Calculates:** Derived data like `filteredTasks`.
+* **Defines handlers:** `handleAddTask`, `handleDeleteTask`, `handleToggleComplete`.
 
----
 
-## Derived Data
 
-You do not always need `useState` for data that changes. If data can be computed from existing state, it should be calculated on the fly as a standard variable. 
+### Derived Data
+
+You do not always need `useState` for data that changes. If data can be computed from existing state, it should be calculated on the fly as a standard variable.
 
 ```javascript
 // Derived data — not state, just calculated during render
 const filteredTasks = selectedSubject === "All"
   ? tasks
   : tasks.filter(task => task.subject === selectedSubject)
-
-
 
 ```
 
