@@ -263,8 +263,3 @@ Right now, `TaskBoard` has all of its task data hardcoded inside the component's
 
 Should it live in `TaskBoard`? In the root `App` component? Somewhere else entirely? Think about the implications of your choice and what problems might arise depending on where you decide to store that data.
 
-```
-
-Would you like me to evaluate your thoughts on the final question, or should we jump straight into drafting Lesson 4 on state?
-
-```
